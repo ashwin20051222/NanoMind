@@ -1,5 +1,0 @@
-{
-  "name": "NanoMind / ZeroClaw",
-  "description": "Local-first AI assistant stack with a Next.js control UI, a Rust edge server, and ESP32-S3 firmware.",
-  "requestFramePermissions": []
-}
