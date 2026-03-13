@@ -656,5 +656,5 @@ Read more:
 ---
 
 <div align="center">
-<sub>Built for local-first AI operations across browser, edge, and embedded runtime layers.</sub>
+<sub>Built with ❤️ for embedded AI by Ashwin S</sub>
 </div>
