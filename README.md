@@ -98,7 +98,7 @@ For the shortest path by runtime layer, use:
 
 ## Dashboard Preview
 
-Click any preview to open the full-size asset. The README uses sanitized files from `docs/screenshots/` so GitHub renders and opens them reliably.
+Click any preview to open the full-size asset. The README uses sanitized files from `docs/screenshots/` so GitHub renders and opens them reliably, and legacy `UI_Look/` image paths are kept in the repo for compatibility with older shared GitHub links.
 
 | Overview | Chat |
 | --- | --- |
