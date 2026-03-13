@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/screenshots/nanomind-readme-banner.svg" alt="NanoMind Logo" width="1000" />
+<img src="docs/screenshots/nanomind-user-logo-header.png" alt="NanoMind Logo" width="1000" />
 
 # NanoMind
 
