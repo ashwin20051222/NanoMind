@@ -1,613 +1,842 @@
-<p align="center">
-  <img src="./public/nanomind-logo.svg" alt="NanoMind logo" width="720">
-</p>
+<div align="center">
 
-# NanoMind / ZeroClaw
+<img src="UI_Look/Logo/ChatGPT Image Mar 12, 2026, 05_12_25 PM.png" alt="NanoMind Logo" width="600" />
 
-Local-first AI operating console for a Digital Worker, Rust edge routing, and ESP32 device clients.
+# NanoMind
 
-NanoMind is the product-facing name used in the UI and branding. `ZeroClaw` still appears in the repository lineage, architecture references, and some internal naming. This README treats both names as the same system.
+**Ultra-lightweight, secure AI assistant — edge first, cloud fallback ⚡**
 
-## Quick Routes
+Tiny footprint on ESP32-S3 · Local inference via Ollama · Cloud fallback when needed · Full web dashboard
 
-- [Overview](#overview)
-- [What This Repo Contains](#what-this-repo-contains)
-- [Current Status](#current-status)
-- [Recent Updates](#recent-updates)
-- [Repository](#repository)
-- [UI Reference](#ui-reference)
-- [Quick Start](#quick-start)
-- [Architecture](#architecture)
-- [Frontend Control UI](#frontend-control-ui)
-- [Rust Edge Server](#rust-edge-server)
-- [ESP32 Firmware](#esp32-firmware)
-- [Configuration Reference](#configuration-reference)
-- [Implementation Gaps](#implementation-gaps)
-- [Repository Layout](#repository-layout)
-- [Docs](#docs)
-- [Troubleshooting](#troubleshooting)
+---
 
-## Overview
+[Getting Started](#-quick-start) · [Install](#-prerequisites--installation) · [Features](#-features) · [Architecture](#%EF%B8%8F-architecture) · [Dashboard](#%EF%B8%8F-dashboard-preview) · [Docs Hub](#-documentation)
 
-NanoMind is not a single chat app. It is a small AI operating stack with three major runtime layers:
+[Cloud Deploy](#%EF%B8%8F-deployment-guide-cloud-only-mode) · [Edge Deploy](#-deployment-guide-edge-only-mode) · [Hybrid Deploy](#-deployment-guide-hybrid-mode-recommended)
 
-1. A browser-based control interface built with Next.js.
-2. A Rust edge server that handles authentication, routing, inference, and WebSocket connections.
-3. ESP32-S3 firmware that acts as a thin device client connected to the edge server.
+[Setup Guide](docs/SETUP_GUIDE.md) · [Architecture Deep Dive](docs/ARCHITECTURE.md) · [Deployment Procedure](docs/PROCEDURE.md) · [Board Guides](docs/boards/)
 
-The intended operating model is:
+</div>
 
-```text
-ESP32 device or browser UI
-          |
-          v
-    Rust edge server
-          |
-          +--> local model via Ollama
-          |
-          +--> cloud fallback when local inference fails
+---
+
+## ✨ Features
+
+- 🏎️ **Lean Device Firmware** — The ESP32-S3 stays thin: Wi-Fi, NTP clock sync, HMAC-SHA256 signing, and serial I/O. No on-device model weights.
+- 🧠 **Edge-First Inference** — Local LLM inference through a laptop or Raspberry Pi bridge running Ollama, llama.cpp, or any compatible model server.
+- ☁️ **Cloud Fallback** — Automatic failover to cloud providers (OpenAI, Gemini, etc.) when the edge bridge is offline.
+- 🔐 **Secure by Design** — Shared-secret HMAC authentication, timestamp freshness windows, optional CA-pinned TLS, and reverse-proxy ready.
+- 🌐 **Multi-Board Support** — First-class support for ESP32-S3 and Raspberry Pi, with porting kits for STM32 and generic boards.
+- 🖥️ **Web Dashboard** — Full-featured Next.js gateway dashboard with real-time session management, agent control, model configuration, and cron jobs.
+- ⚙️ **One-Command Setup** — Single `setup_stack.py` script generates all configs for relay, bridge, and device boards.
+- 🔄 **Three Deployment Modes** — `cloud`, `edge`, or `hybrid` — choose your inference topology per deployment.
+
+---
+
+## 🖥️ Dashboard Preview
+
+NanoMind ships with a full web-based gateway dashboard built with Next.js. Here's what it looks like:
+
+<details>
+<summary><b>📊 Overview — Gateway status, runtime, session, and coverage at a glance</b></summary>
+<br>
+<img src="UI_Look/Screenshot From 2026-03-13 13-48-47.png" alt="Dashboard Overview" width="800" />
+</details>
+
+<details>
+<summary><b>💬 Chat — Direct runtime control for the active worker session</b></summary>
+<br>
+<img src="UI_Look/Screenshot From 2026-03-13 13-48-36.png" alt="Chat Interface" width="800" />
+</details>
+
+<details>
+<summary><b>🔗 Channels — Google and Meta connection state from the edge server</b></summary>
+<br>
+<img src="UI_Look/Screenshot From 2026-03-13 13-48-59.png" alt="Channels" width="800" />
+</details>
+
+<details>
+<summary><b>📡 Instances — Connected clients and device presence</b></summary>
+<br>
+<img src="UI_Look/Screenshot From 2026-03-13 13-49-07.png" alt="Instances" width="800" />
+</details>
+
+<details>
+<summary><b>🗂️ Sessions — Active browser operator session inspection</b></summary>
+<br>
+<img src="UI_Look/Screenshot From 2026-03-13 13-49-15.png" alt="Sessions" width="800" />
+</details>
+
+<details>
+<summary><b>📈 Usage — Message activity and session summary</b></summary>
+<br>
+<img src="UI_Look/Screenshot From 2026-03-13 13-49-22.png" alt="Usage" width="800" />
+</details>
+
+<details>
+<summary><b>⏰ Cron Jobs — Recurring worker definitions and workflow imports</b></summary>
+<br>
+<img src="UI_Look/Screenshot From 2026-03-13 13-49-33.png" alt="Cron Jobs" width="800" />
+</details>
+
+<details>
+<summary><b>🤖 Agents — Operator profile and runtime management</b></summary>
+<br>
+<img src="UI_Look/Screenshot From 2026-03-13 13-49-40.png" alt="Agents" width="800" />
+</details>
+
+<details>
+<summary><b>⚙️ Config — System settings, devices, models, security, and automation</b></summary>
+<br>
+<img src="UI_Look/Screenshot From 2026-03-13 13-49-51.png" alt="Config System" width="800" />
+<br><br>
+<img src="UI_Look/Screenshot From 2026-03-13 13-50-03.png" alt="Config Models" width="800" />
+</details>
+
+<details>
+<summary><b>📖 Docs — Built-in repository guides and local project references</b></summary>
+<br>
+<img src="UI_Look/Screenshot From 2026-03-13 13-50-15.png" alt="Docs Page" width="800" />
+</details>
+
+---
+
+## 🏗️ Architecture
+
+NanoMind keeps the ESP32-S3 as a durable networked endpoint — inference always runs elsewhere.
+
+```mermaid
+flowchart LR
+    subgraph Device["🔌 Device Layer"]
+        ESP32["ESP32-S3<br/>Wi-Fi · NTP · HMAC"]
+        RPI_D["Raspberry Pi<br/>Device Client"]
+        STM32["STM32<br/>Starter Port"]
+    end
+
+    subgraph Server["☁️ Server Layer"]
+        RELAY["Relay Server<br/>Auth · Routing · Queue"]
+    end
+
+    subgraph Inference["🧠 Inference Layer"]
+        BRIDGE["Edge Bridge<br/>Laptop / RPi"]
+        OLLAMA["Local LLM<br/>Ollama / llama.cpp"]
+        CLOUD["Cloud Provider<br/>OpenAI / Gemini"]
+    end
+
+    ESP32 -->|"signed HTTPS"| RELAY
+    RPI_D -->|"signed HTTP"| RELAY
+    STM32 -->|"signed HTTP"| RELAY
+    RELAY -->|"edge job"| BRIDGE
+    BRIDGE --> OLLAMA
+    RELAY -->|"cloud fallback"| CLOUD
+
+    style Device fill:#1a1a2e,stroke:#16213e,color:#e94560
+    style Server fill:#0f3460,stroke:#16213e,color:#e94560
+    style Inference fill:#533483,stroke:#16213e,color:#e94560
 ```
 
-This repository already contains working pieces of that model, but it is still a mixed prototype rather than a finished production system.
+### Core Design Principles
 
-## What This Repo Contains
+- **Thin device** — No on-device model weights, no WebSocket stack, no large JSON dependencies.
+- **Inference elsewhere** — `edge` (laptop bridge → local LLM) or `cloud` (remote provider).
+- **Signed requests** — HMAC-SHA256 with timestamp freshness on every device ↔ relay call.
+- **Bounded resource use** — Polling intervals and request sizes are capped, failure modes are simple.
 
-This repository currently ships:
+> For the full architecture deep dive, see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
-- a Next.js frontend at the repository root
-- a Rust edge server in [`ai-assistant/edge_server`](./ai-assistant/edge_server)
-- ESP32 firmware in [`ai-assistant/firmware`](./ai-assistant/firmware)
-- implementation notes and setup docs in [`ai-assistant/docs`](./ai-assistant/docs)
+---
 
-This repository does not yet ship:
+## 📂 Repository Layout
 
-- a fully aligned browser-to-edge realtime protocol
-- production-ready OAuth integrations for Google or Meta services
-- a unified cloud routing strategy across browser fallback and server fallback
-- a real pairing API for the frontend device console
-- a backend workflow scheduler or executor for automation
-- a polished device fleet management backend
+```
+NanoMind/
+├── firmware/              # Primary ESP32-S3 firmware (Arduino/PlatformIO)
+├── relay/                 # Secure relay/API server (Python)
+├── bridge/                # Edge bridge for local model inference (Python)
+├── client/                # Admin CLI for remote prompts
+├── small_claw/            # Core library — relay, bridge, and common modules
+├── ai-assistant-firmware-  # Next.js web gateway dashboard
+│   &-edge-server/
+├── board_support/         # Raspberry Pi, STM32, and generic-board starters
+│   ├── raspberry_pi/
+│   ├── stm32/
+│   └── generic/
+├── tools/                 # Setup generator for relay, bridge, and board configs
+├── docs/                  # Architecture, deployment, and per-board guides
+│   ├── ARCHITECTURE.md
+│   ├── SETUP_GUIDE.md
+│   ├── PROCEDURE.md
+│   └── boards/
+│       ├── ESP32S3_SETUP.md
+│       ├── RASPBERRY_PI_SETUP.md
+│       ├── STM32_SETUP.md
+│       └── OTHER_BOARDS_SETUP.md
+└── UI_Look/               # Dashboard screenshots and project logo
+    └── Logo/
+```
 
-## Current Status
+---
 
-| Area | Status | Notes |
+## 📥 Prerequisites & Installation
+
+Install the required tools for your operating system. NanoMind components use **Python** (relay, bridge, tools), **PlatformIO** (ESP32-S3 firmware), and **Node.js** (web dashboard).
+
+### Required Software
+
+| Tool | Used By | Minimum Version |
 | --- | --- | --- |
-| Frontend control UI | Working prototype | Simplified OpenClaw-style shell, digital worker workspace, device panels, logs, settings, and theme system are present |
-| Rust edge server | Implemented | Axum server exposes `POST /query` and `GET /assistant` with token auth |
-| Local inference path | Implemented | Uses Ollama `llama3` via `OLLAMA_URL/api/generate` |
-| Cloud fallback in Rust | Implemented | Falls back to OpenAI-compatible path through `CLOUD_API_KEY` |
-| Cloud fallback in browser | Partial | Browser fallback currently supports Gemini and direct local Ollama only; unsupported browser models report `not implemented` |
-| ESP32 firmware | Implemented | Wi-Fi, WebSocket client, task setup, and response handling are present |
-| Automation workspace | Local-only | UI supports create/import/edit/export of workflows in browser storage, but execution is not backed by a server scheduler |
-| Integrations | Not implemented | UI shows explicit unavailable state instead of fake connected data |
-| Pairing console | Not implemented | UI no longer generates fake QR/token data without a real API |
-| Browser <-> edge streaming protocol | Partial | Frontend expects richer events than the current Rust WebSocket server emits |
+| Python | Relay, bridge, admin CLI, setup tools | 3.10+ |
+| PlatformIO (CLI or IDE) | ESP32-S3 firmware build & flash | Latest |
+| Node.js + npm | Web gateway dashboard | 18+ |
+| Git | Cloning the repository | Any |
+| Ollama / llama.cpp | Local model server (edge/hybrid modes) | Latest |
+| Cloud API key | Cloud provider access (cloud/hybrid modes) | — |
 
-## Recent Updates
+### 🪟 Windows
 
-- The UI now uses real runtime data only. Seeded devices, seeded workflows, fake integrations, and generated pairing tokens were removed.
-- The assistant surface was simplified into a cleaner Digital Worker workspace.
-- Automation now supports visual editing, JSON editing, drag-and-drop node building, and import/export for NanoMind, n8n, and OpenClaw-style workflow JSON.
-- Integrations and pairing now explicitly report `Not implemented` or `Not connected` instead of pretending to be live.
+<details>
+<summary><b>Click to expand Windows setup</b></summary>
 
-## Repository
+#### Option A: Using winget (recommended)
 
-This project is intended to be published from the GitHub account below. The existing README content stays intact; this section only adds the repo ownership and clone details.
+```powershell
+# Install Python 3
+winget install Python.Python.3.12
 
-- GitHub username: [`ashwin20051222`](https://github.com/ashwin20051222)
-- Repository: [`ashwin20051222/NanoMind`](https://github.com/ashwin20051222/NanoMind)
-- Clone command: `gh repo clone ashwin20051222/NanoMind`
-- Git remote URL: `https://github.com/ashwin20051222/NanoMind.git`
+# Install Node.js (LTS)
+winget install OpenJS.NodeJS.LTS
 
-## UI Reference
-
-The UI screenshot assets live in [`ui_look`](./ui_look). This README keeps the existing project documentation intact, and the GitHub README preview references that folder directly so the latest checked-in UI image renders from the repository itself.
-
-### Overview workspace
-
-<p align="center">
-  <img src="./ui_look/ui-overview.png" alt="NanoMind overview workspace screenshot" width="1200">
-</p>
-
-Current asset path:
-
-- [`ui_look/ui-overview.png`](./ui_look/ui-overview.png)
-- Repository image source: `https://github.com/ashwin20051222/NanoMind/blob/main/ui_look/ui-overview.png`
-
-## Why This README Looks Different
-
-This README is intentionally structured more like the `zeroclaw-labs/zeroclaw` project README: fast entry points, explicit status, practical quick-start paths, and architecture-first documentation. The implementation details below are specific to this repository, not copied claims from ZeroClaw.
-
-Reference used for structure and tone:
-
-- https://github.com/zeroclaw-labs/zeroclaw
-
-## Quick Start
-
-Pick the smallest setup that matches what you want to validate.
-
-### Option 0: Run the UI only
-
-Use this if you want to inspect the frontend shell and workspace behavior without standing up the backend.
-
-1. Install Node dependencies.
-
-   ```bash
-   npm install
-   ```
-
-2. Start the frontend.
-
-   ```bash
-   npm run dev
-   ```
-
-3. Open:
-
-   ```text
-   http://127.0.0.1:3000
-   ```
-
-Notes:
-
-- The UI can render without the Rust backend.
-- Runtime state will appear offline or degraded unless the edge server is also running.
-- The UI no longer seeds fake devices, workflows, integrations, or pairing tokens.
-- The Gemini path requires a browser-side API key.
-- Direct browser fallback to Ollama requires a local Ollama instance.
-- Other browser-side model options currently report `not implemented`.
-
-### Option 1: Run the UI with the Rust edge server
-
-Use this if you want the frontend to talk to a real local runtime path.
-
-1. Start Ollama locally and ensure `llama3` is available.
-
-   ```bash
-   ollama run llama3
-   ```
-
-2. Create a frontend environment file at `.env.local`.
-
-   ```env
-   NEXT_PUBLIC_WS_URL=ws://localhost:3001/assistant
-   NEXT_PUBLIC_AUTH_TOKEN=super_secret_token_123
-   NEXT_PUBLIC_GEMINI_API_KEY=
-   ```
-
-3. Create an edge server environment file in `ai-assistant/edge_server/.env`.
-
-   ```env
-   PORT=3001
-   OLLAMA_URL=http://localhost:11434
-   AUTH_TOKEN=super_secret_token_123
-   CLOUD_API_KEY=
-   ```
-
-4. Start the Rust edge server.
-
-   ```bash
-   cd ai-assistant/edge_server
-   cargo run --release
-   ```
-
-5. In another terminal, start the frontend.
-
-   ```bash
-   npm run dev
-   ```
-
-Important reality:
-
-- The frontend and the edge server can now share the same default auth token.
-- The frontend dev server defaults to `127.0.0.1:3000`, so the edge server needs a different port unless you also move the frontend.
-- The browser still expects a richer event model than the Rust WebSocket server currently returns.
-- The result is usable for local exploration, but not yet protocol-complete.
-
-### Option 2: Bring in the ESP32 firmware
-
-Use this if you want to test the device layer as well.
-
-1. Set up ESP-IDF for ESP32-S3 development.
-2. Configure firmware Wi-Fi and endpoint values.
-3. Build and flash the firmware from [`ai-assistant/firmware`](./ai-assistant/firmware).
-4. Start the Rust edge server first.
-5. Monitor the device serial output for connection and response logs.
-
-See:
-
-- [`ai-assistant/docs/firmware_build.md`](./ai-assistant/docs/firmware_build.md)
-- [`ai-assistant/docs/server_setup.md`](./ai-assistant/docs/server_setup.md)
-
-## Architecture
-
-### High-level architecture
-
-```text
-+-----------------------+         +---------------------------+
-| Browser Control UI    |         | ESP32-S3 Device Client    |
-| Next.js / React       |         | ESP-IDF / FreeRTOS        |
-+-----------+-----------+         +-------------+-------------+
-            |                                     |
-            | WebSocket / HTTP                    | WebSocket / HTTP
-            +-------------------+-----------------+
-                                |
-                                v
-                    +---------------------------+
-                    | Rust Edge Server          |
-                    | Axum / Tokio              |
-                    +-------------+-------------+
-                                  |
-                  +---------------+----------------+
-                  |                                |
-                  v                                v
-        +--------------------+          +----------------------+
-        | Ollama Local Model |          | Cloud Fallback       |
-        | llama3             |          | OpenAI-compatible    |
-        +--------------------+          +----------------------+
+# Install Git
+winget install Git.Git
 ```
 
-### Layer responsibilities
+#### Option B: Using Chocolatey
 
-#### Browser control UI
+```powershell
+choco install python3 nodejs-lts git -y
+```
 
-The root app is a Next.js 15 + React 19 frontend that currently provides:
+#### Install PlatformIO
 
-- a persistent control shell
-- top-level runtime status indicators
-- a left navigation rail for assistant, devices, integrations, logs, automation, and settings
-- a simplified assistant workspace branded as a Digital Worker surface
-- device inventory surfaces
-- logs and settings workspaces
-- a workflow builder that supports visual editing, JSON editing, drag-and-drop authoring, and import/export
-- a right-side context panel for runtime state
-- browser-side fallback logic when the edge route is unavailable
-- explicit `Not connected` and `Not implemented` states instead of seeded demo data
+```powershell
+# Via pip (after Python is installed)
+pip install platformio
 
-Primary files:
+# Or install the VS Code extension: search "PlatformIO IDE"
+```
 
-- [`app/page.tsx`](./app/page.tsx)
-- [`app/layout.tsx`](./app/layout.tsx)
-- [`app/globals.css`](./app/globals.css)
-- [`components/ChatWindow.tsx`](./components/ChatWindow.tsx)
-- [`components/AutomationWorkspace.tsx`](./components/AutomationWorkspace.tsx)
-- [`components/MessageBubble.tsx`](./components/MessageBubble.tsx)
-- [`components/SettingsPanel.tsx`](./components/SettingsPanel.tsx)
-- [`api/httpClient.ts`](./api/httpClient.ts)
-- [`hooks/useNanoMind.ts`](./hooks/useNanoMind.ts)
-- [`api/wsClient.ts`](./api/wsClient.ts)
+#### Install Ollama (for edge/hybrid modes)
 
-#### Rust edge server
+Download from [ollama.com](https://ollama.com/download/windows) and run the installer.
 
-The edge server is built with Axum and Tokio. It currently provides:
+```powershell
+# After installing, pull a model
+ollama pull qwen2.5:3b-instruct
+```
 
-- `POST /query` for device-style JSON requests
-- `GET /assistant` for WebSocket connections
-- constant-time token comparison
-- local inference routing through Ollama
-- cloud fallback when the local LLM path fails
-- simple keyword-based integration interception
+> **Note:** On Windows, use `python` instead of `python3` in all commands below.
 
-Primary files:
+</details>
 
-- [`ai-assistant/edge_server/src/main.rs`](./ai-assistant/edge_server/src/main.rs)
-- [`ai-assistant/edge_server/src/config.rs`](./ai-assistant/edge_server/src/config.rs)
-- [`ai-assistant/edge_server/src/server.rs`](./ai-assistant/edge_server/src/server.rs)
-- [`ai-assistant/edge_server/src/websocket.rs`](./ai-assistant/edge_server/src/websocket.rs)
-- [`ai-assistant/edge_server/src/llm_router.rs`](./ai-assistant/edge_server/src/llm_router.rs)
-- [`ai-assistant/edge_server/src/cloud_fallback.rs`](./ai-assistant/edge_server/src/cloud_fallback.rs)
-- [`ai-assistant/edge_server/src/session_manager.rs`](./ai-assistant/edge_server/src/session_manager.rs)
+### 🍎 macOS
 
-#### ESP32 firmware
+<details>
+<summary><b>Click to expand macOS setup</b></summary>
 
-The firmware is a thin device client built around ESP-IDF and FreeRTOS. It currently:
-
-- boots multiple tasks from `app_main`
-- brings up Wi-Fi
-- opens an AI connection to the edge server
-- handles input and response processing on-device
-- logs assistant responses through the firmware runtime
-
-Primary files:
-
-- [`ai-assistant/firmware/main/main.c`](./ai-assistant/firmware/main/main.c)
-- [`ai-assistant/firmware/main/wifi_manager.c`](./ai-assistant/firmware/main/wifi_manager.c)
-- [`ai-assistant/firmware/main/ai_client.cpp`](./ai-assistant/firmware/main/ai_client.cpp)
-- [`ai-assistant/firmware/main/response_handler.c`](./ai-assistant/firmware/main/response_handler.c)
-
-## Frontend Control UI
-
-The root frontend is the operator-facing control surface for the stack. It is not just a chat box.
-
-Current UI characteristics:
-
-- OpenClaw-inspired structural shell
-- light and dark monochrome theme
-- NanoMind branding and PWA metadata
-- assistant workspace as runtime event stream
-- device list and contextual system sidebar
-- workspaces for devices, integrations, logs, automation, and settings
-
-The frontend currently mixes two responsibilities:
-
-1. It acts as the main control console.
-2. It also contains direct browser-side cloud fallback logic.
-
-That second role is useful for local exploration, but it means the frontend is currently doing more runtime work than a production control UI ideally would.
-
-### Frontend scripts
+#### Using Homebrew (recommended)
 
 ```bash
+# Install Homebrew if not present
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Install prerequisites
+brew install python@3.12 node git
+
+# Install PlatformIO
+pip3 install platformio
+
+# Install Ollama (for edge/hybrid modes)
+brew install ollama
+ollama pull qwen2.5:3b-instruct
+```
+
+#### Using MacPorts
+
+```bash
+sudo port install python312 nodejs18 git
+pip3 install platformio
+```
+
+</details>
+
+### 🐧 Linux
+
+<details>
+<summary><b>Ubuntu / Debian</b></summary>
+
+```bash
+# Update package lists
+sudo apt update && sudo apt upgrade -y
+
+# Install Python 3 and pip
+sudo apt install -y python3 python3-pip python3-venv
+
+# Install Node.js (via NodeSource)
+curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+sudo apt install -y nodejs
+
+# Install Git
+sudo apt install -y git
+
+# Install PlatformIO
+pip3 install platformio
+
+# Install Ollama (for edge/hybrid modes)
+curl -fsSL https://ollama.com/install.sh | sh
+ollama pull qwen2.5:3b-instruct
+```
+
+</details>
+
+<details>
+<summary><b>Fedora / RHEL / CentOS</b></summary>
+
+```bash
+# Install Python 3 and pip
+sudo dnf install -y python3 python3-pip
+
+# Install Node.js
+sudo dnf install -y nodejs npm
+
+# Install Git
+sudo dnf install -y git
+
+# Install development tools (may be needed for PlatformIO)
+sudo dnf group install -y "Development Tools"
+
+# Install PlatformIO
+pip3 install platformio
+
+# Install Ollama (for edge/hybrid modes)
+curl -fsSL https://ollama.com/install.sh | sh
+ollama pull qwen2.5:3b-instruct
+```
+
+</details>
+
+<details>
+<summary><b>Arch Linux / Manjaro</b></summary>
+
+```bash
+# Install base packages
+sudo pacman -Syu --noconfirm python python-pip nodejs npm git base-devel
+
+# Install PlatformIO
+pip install platformio
+
+# Install Ollama (for edge/hybrid modes)
+# Option A: AUR
+yay -S ollama
+
+# Option B: Official installer
+curl -fsSL https://ollama.com/install.sh | sh
+
+ollama pull qwen2.5:3b-instruct
+```
+
+</details>
+
+<details>
+<summary><b>openSUSE</b></summary>
+
+```bash
+sudo zypper install -y python3 python3-pip nodejs npm git
+pip3 install platformio
+
+# Install Ollama (for edge/hybrid modes)
+curl -fsSL https://ollama.com/install.sh | sh
+ollama pull qwen2.5:3b-instruct
+```
+
+</details>
+
+### 🍓 Raspberry Pi (Raspberry Pi OS)
+
+<details>
+<summary><b>Click to expand Raspberry Pi setup</b></summary>
+
+```bash
+sudo apt update && sudo apt upgrade -y
+sudo apt install -y python3 python3-pip python3-venv nodejs npm git
+
+# Install PlatformIO (only if building firmware on the Pi)
+pip3 install platformio
+
+# Install Ollama (for edge inference on Pi 4/5)
+curl -fsSL https://ollama.com/install.sh | sh
+ollama pull qwen2.5:3b-instruct
+```
+
+> **Tip:** If memory is limited on older Pi models, run the bridge on the Pi and point it at a separate LAN machine hosting the model server.
+
+</details>
+
+### Verify Installation
+
+After installing, confirm everything is working:
+
+```bash
+python3 --version      # Should be 3.10+
+node --version         # Should be 18+
+npm --version
+git --version
+pio --version          # PlatformIO CLI
+ollama --version       # Only for edge/hybrid
+```
+
+---
+
+## ☁️ Deployment Guide: Cloud-Only Mode
+
+Cloud mode uses a remote LLM provider (OpenAI, Gemini, etc.) with no local inference. This is the **simplest deployment** — no bridge or local model server needed.
+
+> 📖 Full details: [docs/SETUP_GUIDE.md](docs/SETUP_GUIDE.md) — Step 2 (Cloud-only) · [docs/PROCEDURE.md](docs/PROCEDURE.md) — Sections 2–6
+
+**What you need:**
+- A cloud API key (OpenAI, Gemini, or compatible provider)
+- The relay server (Python)
+- One or more device boards
+
+### Step 1: Clone the repository
+
+```bash
+git clone https://github.com/YOUR_USERNAME/NanoMind.git
+cd NanoMind
+```
+
+### Step 2: Generate cloud-only configs
+
+```bash
+python3 tools/setup_stack.py \
+  --mode cloud \
+  --board esp32s3 \
+  --relay-url https://relay.example.com
+```
+
+### Step 3: Start the relay
+
+```bash
+python3 relay/run_relay.py setup_output/relay/config.json
+```
+
+Verify it's running:
+
+```bash
+curl http://127.0.0.1:8787/healthz
+# Expected: {"ok": true}
+```
+
+### Step 4: Provision your device
+
+**ESP32-S3:**
+
+```bash
+cp setup_output/firmware/esp32s3/secrets.h firmware/include/secrets.h
+pio run -d firmware
+pio run -d firmware -t upload
+pio device monitor -d firmware
+```
+
+**Raspberry Pi:**
+
+```bash
+cp setup_output/board_support/raspberry_pi/device_config.json board_support/raspberry_pi/device_config.json
+python3 board_support/raspberry_pi/pi_device_client.py \
+  --config board_support/raspberry_pi/device_config.json --console
+```
+
+**STM32:** See [docs/boards/STM32_SETUP.md](docs/boards/STM32_SETUP.md)
+
+### Step 5: Test
+
+```bash
+python3 client/send_prompt.py \
+  --relay-url http://127.0.0.1:8787 \
+  --token YOUR_ADMIN_TOKEN \
+  --mode cloud \
+  --prompt "Hello from cloud mode!"
+```
+
+> ⚠️ Make sure `cloud_provider`, API key, and base URL are set in `setup_output/relay/config.json`. See [docs/PROCEDURE.md](docs/PROCEDURE.md) — Section 9 for troubleshooting.
+
+---
+
+## 🧠 Deployment Guide: Edge-Only Mode
+
+Edge mode runs **all inference locally** through a bridge connected to a local model server (Ollama, llama.cpp, etc.). No cloud API dependency — full privacy and offline capability.
+
+> 📖 Full details: [docs/SETUP_GUIDE.md](docs/SETUP_GUIDE.md) — Step 4 (Option A/B) · [docs/PROCEDURE.md](docs/PROCEDURE.md) — Sections 4–6
+
+**What you need:**
+- A local model server (e.g., Ollama on a laptop or Raspberry Pi)
+- The relay server (Python)
+- The bridge (Python)
+- One or more device boards
+
+### Step 1: Clone the repository
+
+```bash
+git clone https://github.com/YOUR_USERNAME/NanoMind.git
+cd NanoMind
+```
+
+### Step 2: Install and start a local model server
+
+```bash
+# Using Ollama (recommended)
+ollama pull qwen2.5:3b-instruct
+ollama serve
+# Verify: curl http://127.0.0.1:11434/api/tags
+```
+
+### Step 3: Generate edge-only configs
+
+**ESP32-S3 device:**
+
+```bash
+python3 tools/setup_stack.py \
+  --mode edge \
+  --board esp32s3 \
+  --relay-url http://192.168.1.10:8787 \
+  --wifi-ssid your-wifi-name \
+  --wifi-password your-wifi-password
+```
+
+**Raspberry Pi device:**
+
+```bash
+python3 tools/setup_stack.py \
+  --mode edge \
+  --board raspberry-pi \
+  --relay-url http://192.168.1.10:8787
+```
+
+### Step 4: Start the relay
+
+```bash
+python3 relay/run_relay.py setup_output/relay/config.json
+```
+
+### Step 5: Start the edge bridge
+
+```bash
+python3 bridge/run_bridge.py setup_output/bridge/config.json
+```
+
+Confirm the relay reports a live bridge.
+
+### Step 6: Provision your device
+
+Follow the same device flashing steps as cloud mode above, using the edge-generated `secrets.h`.
+
+### Step 7: Test
+
+```bash
+python3 client/send_prompt.py \
+  --relay-url http://127.0.0.1:8787 \
+  --token YOUR_ADMIN_TOKEN \
+  --mode edge \
+  --prompt "Hello from edge mode!"
+```
+
+> 💡 The bridge long-polls the relay for edge jobs, runs them against your local model server, and returns results. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — Request Flows.
+
+---
+
+## 🔄 Deployment Guide: Hybrid Mode (Recommended)
+
+Hybrid mode gives you the **best of both worlds**: low-latency local inference when the edge bridge is online, with automatic cloud fallback when it's not. This is the **recommended deployment mode**.
+
+> 📖 Full details: [docs/SETUP_GUIDE.md](docs/SETUP_GUIDE.md) — Steps 2–7 · [docs/PROCEDURE.md](docs/PROCEDURE.md) — Full sequence
+
+**What you need:**
+- A local model server (Ollama, llama.cpp, etc.)
+- A cloud API key (OpenAI, Gemini, or compatible)
+- The relay server (Python)
+- The bridge (Python)
+- One or more device boards
+
+### Step 1: Clone the repository
+
+```bash
+git clone https://github.com/YOUR_USERNAME/NanoMind.git
+cd NanoMind
+```
+
+### Step 2: Install the local model server
+
+```bash
+ollama pull qwen2.5:3b-instruct
+ollama serve
+```
+
+### Step 3: Generate hybrid configs
+
+```bash
+python3 tools/setup_stack.py \
+  --mode hybrid \
+  --board esp32s3 \
+  --relay-url http://127.0.0.1:8787 \
+  --wifi-ssid your-wifi-name \
+  --wifi-password your-wifi-password
+```
+
+### Step 4: Start the relay
+
+```bash
+python3 relay/run_relay.py setup_output/relay/config.json
+```
+
+### Step 5: Start the edge bridge
+
+```bash
+python3 bridge/run_bridge.py setup_output/bridge/config.json
+```
+
+### Step 6: Provision your device
+
+```bash
+cp setup_output/firmware/esp32s3/secrets.h firmware/include/secrets.h
+pio run -d firmware
+pio run -d firmware -t upload
+pio device monitor -d firmware
+```
+
+### Step 7: Launch the web dashboard (optional)
+
+```bash
+cd ai-assistant-firmware-\&-edge-server
+npm install
 npm run dev
-npm run build
-npm run start
-npm run lint
 ```
 
-### Frontend dependency notes
+### Step 8: Validate the full system
 
-- Node 24 is the safest option for this repository right now.
-- Node 25 caused engine friction during local setup.
-- `npm install` is sufficient for the root frontend.
+Follow the [verification sequence from docs/PROCEDURE.md](docs/PROCEDURE.md):
 
-## Rust Edge Server
-
-The Rust server is the real orchestration center in the current architecture.
-
-### Current behavior
-
-- accepts HTTP device queries at `POST /query`
-- accepts WebSocket connections at `GET /assistant`
-- authenticates clients with a shared token
-- routes to integration stubs first
-- tries Ollama second
-- falls back to the cloud path if local inference fails
-
-### Current configuration
-
-Built-in defaults loaded by [`ai-assistant/edge_server/src/config.rs`](./ai-assistant/edge_server/src/config.rs):
-
-```env
-PORT=3000
-OLLAMA_URL=http://localhost:11434
-AUTH_TOKEN=super_secret_token_123
-CLOUD_API_KEY=
-```
-
-When you run the frontend and edge server side by side on one machine, override `PORT` to `3001` and point `NEXT_PUBLIC_WS_URL` at that port.
-
-### Rust quick commands
+1. Relay `healthz` returns `ok: true`
+2. Admin prompt returns a reply
+3. Device heartbeat returns `ok: true`
+4. Device prompt returns a reply
+5. Stop the bridge → verify cloud fallback works
+6. Restart the bridge → verify edge resumes
 
 ```bash
-cd ai-assistant/edge_server
-cargo run --release
+# Quick health check
+curl http://127.0.0.1:8787/healthz
+
+# Admin prompt test
+python3 client/send_prompt.py \
+  --relay-url http://127.0.0.1:8787 \
+  --token YOUR_ADMIN_TOKEN \
+  --mode hybrid \
+  --prompt "Ping from admin client."
 ```
 
-## ESP32 Firmware
+> 🔐 **Production hardening:** Before unattended deployment, apply the checklist from [docs/PROCEDURE.md](docs/PROCEDURE.md) — Section 7: unique secrets per board, HTTPS + CA pinning, systemd service units, firewall rules, and log rotation.
 
-The firmware exists to make NanoMind more than a browser demo.
+---
 
-### Current behavior
+## 🔧 Production Hardening Checklist
 
-- starts Wi-Fi setup task
-- waits briefly for connectivity
-- starts AI connection, input, and response tasks
-- communicates with the edge server rather than talking directly to cloud providers
+Before deploying NanoMind in production, review these items from [docs/PROCEDURE.md](docs/PROCEDURE.md):
 
-### Firmware assumptions
+- [ ] Unique secrets per board and per bridge
+- [ ] HTTPS and CA pinning for ESP32-S3 and STM32
+- [ ] systemd service units or another process supervisor for relay and bridge
+- [ ] Firewall rules on the relay host
+- [ ] Log rotation for relay and bridge output
+- [ ] Regular backup of relay state if required
+- [ ] Replace all generated secrets with deployment-specific ones
 
-- ESP32-S3 target
-- ESP-IDF toolchain installed
-- reachable edge server endpoint
-- shared auth/token model still in use
+> 📖 See also: [docs/SETUP_GUIDE.md](docs/SETUP_GUIDE.md) — Step 7 (Local to Production) and [docs/PROCEDURE.md](docs/PROCEDURE.md) — Section 7 (Production Hardening).
 
-See:
+---
 
-- [`ai-assistant/docs/firmware_build.md`](./ai-assistant/docs/firmware_build.md)
-- [`ai-assistant/tools/device_setup.py`](./ai-assistant/tools/device_setup.py)
+## 🚀 Quick Start
 
-## Configuration Reference
+### 1. Generate setup files
 
-### Root frontend variables
+Hybrid ESP32-S3 example:
 
-Recommended local values when you run the frontend and edge server together:
-
-```env
-NEXT_PUBLIC_WS_URL=ws://localhost:3001/assistant
-NEXT_PUBLIC_AUTH_TOKEN=super_secret_token_123
-NEXT_PUBLIC_GEMINI_API_KEY=
+```bash
+python3 tools/setup_stack.py \
+  --mode hybrid \
+  --board esp32s3 \
+  --relay-url http://127.0.0.1:8787 \
+  --wifi-ssid your-wifi-name \
+  --wifi-password your-wifi-password
 ```
 
-If `NEXT_PUBLIC_WS_URL` is not set, the app currently falls back to `ws://localhost:3000/assistant` in code. That collides with the default Next.js dev server port, so it is better to set the variable explicitly when you run both services locally.
+This generates:
 
-### Edge server variables
+- `setup_output/relay/config.json`
+- `setup_output/bridge/config.json`
+- `setup_output/firmware/esp32s3/secrets.h`
+- `setup_output/setup_summary.txt`
 
-```env
-PORT=3001
-OLLAMA_URL=http://localhost:11434
-AUTH_TOKEN=super_secret_token_123
-CLOUD_API_KEY=
+### 2. Start the relay
+
+```bash
+python3 relay/run_relay.py setup_output/relay/config.json
 ```
 
-### About `.env.example`
+### 3. Start the edge bridge for local inference
 
-The root [`.env.example`](./.env.example) is still oriented around AI Studio hosting variables and does not yet match the current local runtime setup:
+Install and start your local model server first, for example Ollama on a laptop or Raspberry Pi:
 
-- `GEMINI_API_KEY`
-- `APP_URL`
-
-That file is not a complete local-development reference for the full NanoMind stack. For local work, use the frontend and edge server environment values shown above.
-
-## Implementation Gaps
-
-These are the most important technical gaps in the current repository.
-
-### 1. Frontend and edge server WebSocket protocol are not fully aligned
-
-The frontend store expects structured events such as:
-
-- authentication confirmation with device inventory
-- streaming chunks
-- response completion semantics
-- richer route and model metadata
-- an initial auth frame before query traffic
-
-The current Rust WebSocket server accepts a simpler request shape:
-
-```json
-{
-  "device_id": "esp32-1",
-  "token": "super_secret_token_123",
-  "query": "hello",
-  "timestamp": 1710000000
-}
+```bash
+python3 bridge/run_bridge.py setup_output/bridge/config.json
 ```
 
-and returns a much simpler response shape:
+### 4. Build and flash the ESP32-S3 firmware
 
-```json
-{
-  "response": "..."
-}
+```bash
+cp setup_output/firmware/esp32s3/secrets.h firmware/include/secrets.h
+pio run -d firmware
+pio run -d firmware -t upload
+pio device monitor -d firmware
 ```
 
-The browser client also opens the socket with the `nanomind-protocol-v1` subprotocol, while the current Rust server upgrades a simpler raw WebSocket handler. That mismatch is a major reason the system still feels partially integrated instead of fully coherent.
+### 5. Send a remote admin prompt
 
-### 2. Cloud fallback exists in two different places
-
-There are currently two fallback strategies:
-
-- Rust server fallback through the edge router
-- browser-side fallback directly from the frontend state store for Gemini and local Ollama
-
-That is acceptable for prototyping, but eventually the project should pick a clearer responsibility boundary.
-
-### 3. Integrations and pairing are not implemented in the frontend
-
-Google/Meta integrations and pairing surfaces are shown in the UI, but they intentionally report `Not implemented` until real APIs exist. The project no longer fills those panels with fake connected data or generated pairing tokens.
-
-### 4. Automation is editor-only today
-
-The automation workspace can create, import, edit, and export workflow definitions locally in the browser, but there is no backend scheduler/execution engine yet. Workflow data is currently a local UI artifact, not a server-controlled runtime.
-
-### 5. Authentication is still a shared-token design
-
-The current auth model is simple and good enough for local testing, but it is not a finished multi-user security model.
-
-## Repository Layout
-
-```text
-.
-├── app/                         # Next.js App Router entrypoints
-├── components/                  # Frontend UI components
-├── hooks/                       # Zustand state and utilities
-├── api/                         # Browser WebSocket and HTTP helpers
-├── public/                      # Manifest, branding, icons, static assets
-├── ai-assistant/
-│   ├── docs/                    # Architecture and setup docs
-│   ├── edge_server/             # Rust runtime edge server
-│   ├── firmware/                # ESP32-S3 firmware
-│   └── tools/                   # Device helper scripts
-├── metadata.json                # Project metadata
-├── package.json                 # Frontend package manifest
-├── next.config.ts               # Next.js config
-└── README.md                    # Canonical project guide
+```bash
+python3 client/send_prompt.py \
+  --relay-url http://127.0.0.1:8787 \
+  --token YOUR_ADMIN_TOKEN \
+  --device-id claw-01 \
+  --mode hybrid \
+  --prompt "Summarize the current device status."
 ```
 
-## Docs
+### 6. Launch the web dashboard
 
-The new GitHub-upload-ready documentation tree starts here:
+```bash
+cd ai-assistant-firmware-\&-edge-server
+npm install
+npm run dev
+```
 
-- [`docs/README.md`](./docs/README.md)
+Open `http://localhost:3000` in your browser.
 
-Structured sections:
+---
 
-- [`docs/get-started`](./docs/get-started)
-- [`docs/install`](./docs/install)
-- [`docs/channels`](./docs/channels)
-- [`docs/agents`](./docs/agents)
-- [`docs/tools`](./docs/tools)
-- [`docs/models`](./docs/models)
-- [`docs/platforms`](./docs/platforms)
-- [`docs/gateway-ops`](./docs/gateway-ops)
-- [`docs/reference`](./docs/reference)
-- [`docs/help`](./docs/help)
+## ⚙️ Deployment Modes
 
-Existing project-specific notes and setup guides also remain here:
+| Mode | Behavior | Best For |
+| --- | --- | --- |
+| `cloud` | Cloud-only inference | Simplest first deployment |
+| `edge` | Local-only inference through the bridge | Full privacy, no cloud dependency |
+| `hybrid` | Edge first, cloud fallback | Low-latency local + reliable fallback |
 
-- [`ai-assistant/docs/architecture.md`](./ai-assistant/docs/architecture.md)
-- [`ai-assistant/docs/implementation_guide.md`](./ai-assistant/docs/implementation_guide.md)
-- [`ai-assistant/docs/os_implementation_guide.md`](./ai-assistant/docs/os_implementation_guide.md)
-- [`ai-assistant/docs/protocol.md`](./ai-assistant/docs/protocol.md)
-- [`ai-assistant/docs/server_setup.md`](./ai-assistant/docs/server_setup.md)
-- [`ai-assistant/docs/firmware_build.md`](./ai-assistant/docs/firmware_build.md)
+The relay also accepts the canonical API names `cloud_only`, `edge_only`, and `edge_then_cloud`. `auto` is treated the same as `hybrid`.
 
-## Troubleshooting
+---
 
-### The UI loads but shows offline or reconnecting
+## 🔧 Supported Hardware
 
-Likely causes:
+| Target | Role | Status |
+| --- | --- | --- |
+| ESP32-S3 | Main device firmware | ✅ First-class support |
+| Raspberry Pi | Relay, bridge, or signed device client | ✅ First-class support |
+| STM32 | Starter port using the same signed HTTP contract | 📦 Porting kit included |
+| Other boards | Any board with HTTP, clock sync, and HMAC-SHA256 | 📋 Contract guide included |
 
-- the Rust edge server is not running
-- the frontend `NEXT_PUBLIC_WS_URL` is pointed at the wrong port
-- the auth token does not match
+---
 
-### Frontend and edge server both try to use port `3000`
+## 📚 Documentation
 
-That will fail locally because Next.js already uses `127.0.0.1:3000` by default in development.
+### Core Docs
 
-Use the split setup documented above:
+| Document | Description | Path |
+| --- | --- | --- |
+| Architecture | System layout and component relationships | [ARCHITECTURE.md](docs/ARCHITECTURE.md) |
+| Setup Guide | Full deployment walkthrough (cloud, edge, hybrid) | [SETUP_GUIDE.md](docs/SETUP_GUIDE.md) |
+| Deployment Procedure | Operational sequence for controlled bring-up | [PROCEDURE.md](docs/PROCEDURE.md) |
 
-- frontend on `127.0.0.1:3000`
-- edge server on `127.0.0.1:3001`
-- `NEXT_PUBLIC_WS_URL=ws://localhost:3001/assistant`
+### Board-Specific Guides
 
-### Integrations or pairing show `Not implemented`
+| Board | Guide |
+| --- | --- |
+| ESP32-S3 | [ESP32S3_SETUP.md](docs/boards/ESP32S3_SETUP.md) |
+| Raspberry Pi | [RASPBERRY_PI_SETUP.md](docs/boards/RASPBERRY_PI_SETUP.md) |
+| STM32 | [STM32_SETUP.md](docs/boards/STM32_SETUP.md) |
+| Other Boards | [OTHER_BOARDS_SETUP.md](docs/boards/OTHER_BOARDS_SETUP.md) |
 
-That is expected in the current repository state. Those UI surfaces no longer use fake data and now wait for real backend support.
+### Board Support Starters
 
-### Automation looks empty
+| Board | Starter Files |
+| --- | --- |
+| Raspberry Pi | [board_support/raspberry_pi/](board_support/raspberry_pi/) |
+| STM32 | [board_support/stm32/](board_support/stm32/) |
+| Generic | [board_support/generic/](board_support/generic/) |
 
-Likely causes:
+### Web Dashboard
 
-- no workflows have been created or imported yet
-- the browser local storage was cleared
-- there is no backend automation scheduler in this repo yet
+The Next.js gateway dashboard lives in [`ai-assistant-firmware-&-edge-server/`](ai-assistant-firmware-&-edge-server/). See its [README](ai-assistant-firmware-&-edge-server/README.md) for setup instructions.
 
-### The edge server starts but responses fail
+---
 
-Likely causes:
+## 🏛️ Architecture Choice
 
-- Ollama is not running
-- `llama3` is not available locally
-- `OLLAMA_URL` is wrong
-- the server is falling through to an unset cloud key
+NanoMind keeps:
 
-### The Gemini path fails in the browser
+- **Arduino/PlatformIO** for the main ESP32-S3 target.
+- **Python** relay and bridge for easier bring-up on laptops and Raspberry Pi.
+- **Next.js** web dashboard for full gateway control and monitoring.
+- The same core design principle: the microcontroller stays small, inference runs elsewhere.
 
-Likely cause:
+---
 
-- `NEXT_PUBLIC_GEMINI_API_KEY` is not set
+## 🔌 Serial Commands
 
-### Lint or install behaves strangely
+When connected to the ESP32-S3 via serial monitor:
 
-Recommended baseline:
+| Command | Action |
+| --- | --- |
+| `/help` | Show available commands |
+| `/status` | Display current device status |
+| `/heartbeat` | Send heartbeat to relay |
+| `/mode auto` | Switch to auto (hybrid) mode |
+| `/mode hybrid` | Switch to hybrid mode |
+| `/mode edge` | Switch to edge-only mode |
+| `/mode cloud` | Switch to cloud-only mode |
+| *any other text* | Sent as a prompt to the relay |
 
-- use Node 24
-- reinstall with `npm install`
-- run `npm run lint`
+---
 
-## Roadmap Direction
+## 🛡️ Security
 
-If this repository continues toward a more complete system, the highest-value next steps are:
+- Shared-secret HMAC between relay and each device or bridge.
+- Timestamp freshness window to reduce replay risk.
+- Optional built-in TLS on the relay, with reverse-proxy deployment recommended.
+- CA-pinned TLS support on the ESP32 firmware.
 
-1. Unify the browser and edge WebSocket protocol.
-2. Move fallback strategy decisions into one authoritative runtime layer.
-3. Replace `Not implemented` integration and pairing states with real APIs.
-4. Add backend automation execution and scheduling.
-5. Tighten device lifecycle management and fleet visibility.
-6. Keep the frontend focused on control and observability rather than inference ownership.
+> For production TLS, paste the relay CA certificate into `RELAY_CA_CERT` in `secrets.h`.
 
-## License / Ownership
+---
 
-No explicit license file is surfaced at the root of this repository snapshot. Add one before treating the repository as distributable open-source software.
+## 🐛 Troubleshooting
+
+| Error | Cause |
+| --- | --- |
+| `signature mismatch` | Secret or body doesn't match between device and relay |
+| `timestamp outside allowed window` | Board clock is wrong or NTP is missing |
+| `no live edge bridge` | Bridge is down or bridge secret is incorrect |
+| `cloud provider is not configured` | Cloud mode selected without cloud settings |
+
+---
+
+<div align="center">
+<sub>Built with ❤️ for embedded AI</sub>
+</div>
