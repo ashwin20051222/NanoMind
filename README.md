@@ -39,69 +39,71 @@ Tiny footprint on ESP32-S3 · Local inference via Ollama · Cloud fallback when 
 
 ## 🖥️ Dashboard Preview
 
-NanoMind ships with a full web-based gateway dashboard built with Next.js. The previews below use the working `UI_Look/` image paths so they render correctly on GitHub.
+NanoMind ships with a full web-based gateway dashboard built with Next.js. The previews below use the working `UI_Look/` image paths so they render directly on GitHub, and each image still opens full-size when clicked.
 
-<details>
-<summary><b>📊 Overview - Gateway status, runtime, session, and coverage at a glance</b></summary>
-<br>
-<a href="UI_Look/Screenshot From 2026-03-13 13-48-47.png"><img src="UI_Look/Screenshot From 2026-03-13 13-48-47.png" alt="Dashboard Overview" width="760" /></a>
-</details>
-
-<details>
-<summary><b>💬 Chat - Direct runtime control for the active worker session</b></summary>
-<br>
-<a href="UI_Look/Screenshot From 2026-03-13 13-48-36.png"><img src="UI_Look/Screenshot From 2026-03-13 13-48-36.png" alt="Chat Interface" width="760" /></a>
-</details>
-
-<details>
-<summary><b>🔗 Channels - Google and Meta connection state from the edge server</b></summary>
-<br>
-<a href="UI_Look/Screenshot From 2026-03-13 13-48-59.png"><img src="UI_Look/Screenshot From 2026-03-13 13-48-59.png" alt="Channels" width="760" /></a>
-</details>
-
-<details>
-<summary><b>📡 Instances - Connected clients and device presence</b></summary>
-<br>
-<a href="UI_Look/Screenshot From 2026-03-13 13-49-07.png"><img src="UI_Look/Screenshot From 2026-03-13 13-49-07.png" alt="Instances" width="760" /></a>
-</details>
-
-<details>
-<summary><b>🗂️ Sessions - Active browser operator session inspection</b></summary>
-<br>
-<a href="UI_Look/Screenshot From 2026-03-13 13-49-15.png"><img src="UI_Look/Screenshot From 2026-03-13 13-49-15.png" alt="Sessions" width="760" /></a>
-</details>
-
-<details>
-<summary><b>📈 Usage - Message activity and session summary</b></summary>
-<br>
-<a href="UI_Look/Screenshot From 2026-03-13 13-49-22.png"><img src="UI_Look/Screenshot From 2026-03-13 13-49-22.png" alt="Usage" width="760" /></a>
-</details>
-
-<details>
-<summary><b>⏰ Cron Jobs - Recurring worker definitions and workflow imports</b></summary>
-<br>
-<a href="UI_Look/Screenshot From 2026-03-13 13-49-33.png"><img src="UI_Look/Screenshot From 2026-03-13 13-49-33.png" alt="Cron Jobs" width="760" /></a>
-</details>
-
-<details>
-<summary><b>🤖 Agents - Operator profile and runtime management</b></summary>
-<br>
-<a href="UI_Look/Screenshot From 2026-03-13 13-49-40.png"><img src="UI_Look/Screenshot From 2026-03-13 13-49-40.png" alt="Agents" width="760" /></a>
-</details>
-
-<details>
-<summary><b>⚙️ Config - System settings, devices, models, security, and automation</b></summary>
-<br>
-<a href="UI_Look/Screenshot From 2026-03-13 13-49-51.png"><img src="UI_Look/Screenshot From 2026-03-13 13-49-51.png" alt="Config System" width="760" /></a>
-<br><br>
-<a href="UI_Look/Screenshot From 2026-03-13 13-50-03.png"><img src="UI_Look/Screenshot From 2026-03-13 13-50-03.png" alt="Config Models" width="760" /></a>
-</details>
-
-<details>
-<summary><b>📖 Docs - Built-in repository guides and local project references</b></summary>
-<br>
-<a href="UI_Look/Screenshot From 2026-03-13 13-50-15.png"><img src="UI_Look/Screenshot From 2026-03-13 13-50-15.png" alt="Docs Page" width="760" /></a>
-</details>
+<table>
+  <tr>
+    <td width="50%" align="center">
+      <b>📊 Overview</b><br/>
+      Gateway status, runtime, session, and coverage at a glance.<br/><br/>
+      <a href="UI_Look/Screenshot From 2026-03-13 13-48-47.png"><img src="UI_Look/Screenshot From 2026-03-13 13-48-47.png" alt="Dashboard Overview" width="100%" /></a>
+    </td>
+    <td width="50%" align="center">
+      <b>💬 Chat</b><br/>
+      Direct runtime control for the active worker session.<br/><br/>
+      <a href="UI_Look/Screenshot From 2026-03-13 13-48-36.png"><img src="UI_Look/Screenshot From 2026-03-13 13-48-36.png" alt="Chat Interface" width="100%" /></a>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <b>🔗 Channels</b><br/>
+      Google and Meta connection state from the edge server.<br/><br/>
+      <a href="UI_Look/Screenshot From 2026-03-13 13-48-59.png"><img src="UI_Look/Screenshot From 2026-03-13 13-48-59.png" alt="Channels" width="100%" /></a>
+    </td>
+    <td width="50%" align="center">
+      <b>📡 Instances</b><br/>
+      Connected clients and device presence.<br/><br/>
+      <a href="UI_Look/Screenshot From 2026-03-13 13-49-07.png"><img src="UI_Look/Screenshot From 2026-03-13 13-49-07.png" alt="Instances" width="100%" /></a>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <b>🗂️ Sessions</b><br/>
+      Active browser operator session inspection.<br/><br/>
+      <a href="UI_Look/Screenshot From 2026-03-13 13-49-15.png"><img src="UI_Look/Screenshot From 2026-03-13 13-49-15.png" alt="Sessions" width="100%" /></a>
+    </td>
+    <td width="50%" align="center">
+      <b>📈 Usage</b><br/>
+      Message activity and session summary.<br/><br/>
+      <a href="UI_Look/Screenshot From 2026-03-13 13-49-22.png"><img src="UI_Look/Screenshot From 2026-03-13 13-49-22.png" alt="Usage" width="100%" /></a>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <b>⏰ Cron Jobs</b><br/>
+      Recurring worker definitions and workflow imports.<br/><br/>
+      <a href="UI_Look/Screenshot From 2026-03-13 13-49-33.png"><img src="UI_Look/Screenshot From 2026-03-13 13-49-33.png" alt="Cron Jobs" width="100%" /></a>
+    </td>
+    <td width="50%" align="center">
+      <b>🤖 Agents</b><br/>
+      Operator profile and runtime management.<br/><br/>
+      <a href="UI_Look/Screenshot From 2026-03-13 13-49-40.png"><img src="UI_Look/Screenshot From 2026-03-13 13-49-40.png" alt="Agents" width="100%" /></a>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <b>⚙️ Config</b><br/>
+      System settings, devices, models, security, and automation.<br/><br/>
+      <a href="UI_Look/Screenshot From 2026-03-13 13-49-51.png"><img src="UI_Look/Screenshot From 2026-03-13 13-49-51.png" alt="Config System" width="100%" /></a><br/><br/>
+      <a href="UI_Look/Screenshot From 2026-03-13 13-50-03.png"><img src="UI_Look/Screenshot From 2026-03-13 13-50-03.png" alt="Config Models" width="100%" /></a>
+    </td>
+    <td width="50%" align="center">
+      <b>📖 Docs</b><br/>
+      Built-in repository guides and local project references.<br/><br/>
+      <a href="UI_Look/Screenshot From 2026-03-13 13-50-15.png"><img src="UI_Look/Screenshot From 2026-03-13 13-50-15.png" alt="Docs Page" width="100%" /></a>
+    </td>
+  </tr>
+</table>
 
 ---
 
