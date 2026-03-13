@@ -1,0 +1,72 @@
+<svg width="1280" height="720" viewBox="0 0 1280 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+    <linearGradient id="clientsBg" x1="40" y1="80" x2="360" y2="600" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFF7ED"/>
+      <stop offset="100%" stop-color="#FFE4E6"/>
+    </linearGradient>
+    <linearGradient id="edgeBg" x1="460" y1="80" x2="820" y2="600" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ECFEFF"/>
+      <stop offset="100%" stop-color="#CCFBF1"/>
+    </linearGradient>
+    <linearGradient id="modelsBg" x1="900" y1="80" x2="1240" y2="600" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#EEF2FF"/>
+      <stop offset="100%" stop-color="#DBEAFE"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1280" height="720" rx="28" fill="#F8FAFC"/>
+
+  <rect x="40" y="84" width="320" height="552" rx="28" fill="url(#clientsBg)" stroke="#FB923C" stroke-width="3"/>
+  <rect x="460" y="84" width="360" height="552" rx="28" fill="url(#edgeBg)" stroke="#14B8A6" stroke-width="3"/>
+  <rect x="900" y="84" width="340" height="552" rx="28" fill="url(#modelsBg)" stroke="#3B82F6" stroke-width="3"/>
+
+  <text x="200" y="130" text-anchor="middle" fill="#9A3412" font-size="28" font-weight="700" font-family="Arial, sans-serif">Operator and Device Layer</text>
+  <text x="640" y="130" text-anchor="middle" fill="#0F766E" font-size="28" font-weight="700" font-family="Arial, sans-serif">Edge Runtime</text>
+  <text x="1070" y="130" text-anchor="middle" fill="#1D4ED8" font-size="28" font-weight="700" font-family="Arial, sans-serif">Inference Layer</text>
+
+  <rect x="86" y="190" width="228" height="120" rx="22" fill="#FFFFFF" stroke="#FDBA74" stroke-width="2.5"/>
+  <text x="200" y="236" text-anchor="middle" fill="#111827" font-size="26" font-weight="700" font-family="Arial, sans-serif">Browser Control UI</text>
+  <text x="200" y="272" text-anchor="middle" fill="#475569" font-size="20" font-family="Arial, sans-serif">Next.js + React</text>
+
+  <rect x="86" y="390" width="228" height="120" rx="22" fill="#FFFFFF" stroke="#FDBA74" stroke-width="2.5"/>
+  <text x="200" y="436" text-anchor="middle" fill="#111827" font-size="26" font-weight="700" font-family="Arial, sans-serif">ESP32-S3 Firmware</text>
+  <text x="200" y="472" text-anchor="middle" fill="#475569" font-size="20" font-family="Arial, sans-serif">ESP-IDF + FreeRTOS</text>
+
+  <rect x="520" y="220" width="240" height="128" rx="22" fill="#FFFFFF" stroke="#2DD4BF" stroke-width="2.5"/>
+  <text x="640" y="270" text-anchor="middle" fill="#111827" font-size="28" font-weight="700" font-family="Arial, sans-serif">Rust Edge Server</text>
+  <text x="640" y="308" text-anchor="middle" fill="#475569" font-size="20" font-family="Arial, sans-serif">Axum + Tokio</text>
+
+  <rect x="520" y="398" width="240" height="128" rx="22" fill="#FFFFFF" stroke="#2DD4BF" stroke-width="2.5"/>
+  <text x="640" y="448" text-anchor="middle" fill="#111827" font-size="28" font-weight="700" font-family="Arial, sans-serif">Model and Integration</text>
+  <text x="640" y="486" text-anchor="middle" fill="#475569" font-size="20" font-family="Arial, sans-serif">Router</text>
+
+  <rect x="948" y="210" width="244" height="132" rx="22" fill="#FFFFFF" stroke="#60A5FA" stroke-width="2.5"/>
+  <text x="1070" y="260" text-anchor="middle" fill="#111827" font-size="28" font-weight="700" font-family="Arial, sans-serif">Local Ollama</text>
+  <text x="1070" y="298" text-anchor="middle" fill="#475569" font-size="20" font-family="Arial, sans-serif">llama3 and compatible</text>
+  <text x="1070" y="326" text-anchor="middle" fill="#475569" font-size="20" font-family="Arial, sans-serif">models</text>
+
+  <rect x="948" y="400" width="244" height="132" rx="22" fill="#FFFFFF" stroke="#60A5FA" stroke-width="2.5"/>
+  <text x="1070" y="450" text-anchor="middle" fill="#111827" font-size="28" font-weight="700" font-family="Arial, sans-serif">Cloud Fallback</text>
+  <text x="1070" y="488" text-anchor="middle" fill="#475569" font-size="20" font-family="Arial, sans-serif">External API route</text>
+
+  <line x1="314" y1="250" x2="520" y2="250" stroke="#475569" stroke-width="4" marker-end="url(#arrow)"/>
+  <line x1="314" y1="450" x2="520" y2="450" stroke="#475569" stroke-width="4" marker-end="url(#arrow)"/>
+  <line x1="640" y1="348" x2="640" y2="398" stroke="#475569" stroke-width="4" marker-end="url(#arrow)"/>
+  <line x1="760" y1="462" x2="948" y2="276" stroke="#475569" stroke-width="4" marker-end="url(#arrow)"/>
+  <line x1="760" y1="462" x2="948" y2="466" stroke="#475569" stroke-width="4" marker-end="url(#arrow)"/>
+
+  <rect x="350" y="220" width="124" height="48" rx="14" fill="#FFFFFF" stroke="#CBD5E1"/>
+  <text x="412" y="251" text-anchor="middle" fill="#475569" font-size="17" font-family="Arial, sans-serif">WebSocket / HTTP</text>
+
+  <rect x="356" y="420" width="112" height="48" rx="14" fill="#FFFFFF" stroke="#CBD5E1"/>
+  <text x="412" y="451" text-anchor="middle" fill="#475569" font-size="17" font-family="Arial, sans-serif">WebSocket</text>
+
+  <rect x="782" y="438" width="118" height="48" rx="14" fill="#FFFFFF" stroke="#CBD5E1"/>
+  <text x="841" y="469" text-anchor="middle" fill="#475569" font-size="17" font-family="Arial, sans-serif">local first</text>
+
+  <rect x="860" y="512" width="144" height="48" rx="14" fill="#FFFFFF" stroke="#CBD5E1"/>
+  <text x="932" y="543" text-anchor="middle" fill="#475569" font-size="17" font-family="Arial, sans-serif">fallback when needed</text>
+</svg>

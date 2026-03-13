@@ -113,33 +113,9 @@ NanoMind ships with a full web-based gateway dashboard built with Next.js. The p
 
 NanoMind keeps the browser UI and device client lightweight while inference and routing happen through the local edge runtime.
 
-```mermaid
-flowchart LR
-    subgraph Clients["🧭 Operator and Device Layer"]
-        WEB["Browser Control UI<br/>Next.js + React"]
-        ESP["ESP32-S3 Firmware<br/>ESP-IDF + FreeRTOS"]
-    end
-
-    subgraph Edge["🦀 Edge Runtime"]
-        EDGE["Rust Edge Server<br/>Axum + Tokio"]
-        ROUTER["Model and Integration Router"]
-    end
-
-    subgraph Models["🧠 Inference Layer"]
-        OLLAMA["Local Ollama<br/>llama3 and compatible models"]
-        CLOUD["Cloud Fallback<br/>external API route"]
-    end
-
-    WEB -->|"WebSocket / HTTP + token"| EDGE
-    ESP -->|"WebSocket + token"| EDGE
-    EDGE --> ROUTER
-    ROUTER --> OLLAMA
-    ROUTER --> CLOUD
-
-    style Clients fill:#1f2937,stroke:#111827,color:#f8fafc
-    style Edge fill:#0f766e,stroke:#115e59,color:#ecfeff
-    style Models fill:#1d4ed8,stroke:#1e3a8a,color:#eff6ff
-```
+<a href="docs/screenshots/architecture-overview.svg">
+  <img src="docs/screenshots/architecture-overview.svg" alt="NanoMind architecture overview" width="100%" />
+</a>
 
 ### Core Design Principles
 
