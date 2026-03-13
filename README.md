@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="UI_Look/Logo/ChatGPT Image Mar 12, 2026, 05_12_25 PM.png" alt="NanoMind Logo" width="420" />
+<img src="docs/screenshots/nanomind-readme-banner.svg" alt="NanoMind Logo" width="1000" />
 
 # NanoMind
 
